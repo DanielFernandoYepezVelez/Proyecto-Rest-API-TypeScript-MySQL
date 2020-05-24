@@ -14,13 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
+const index_1 = __importDefault(require("./routes/index"));
+const posts_1 = __importDefault(require("./routes/posts"));
 class App {
-    constructor() {
-        this.app = express_1.default();
+    // private app: Application;
+    constructor(app) {
+        this.app = app;
+        // this.app = express();
         this.init();
     }
     init() {
         this.middlewares();
+        this.routes();
         this.start();
     }
     settings() {
@@ -31,6 +36,10 @@ class App {
         this.app.use(express_1.default.json());
         this.app.use(express_1.default.urlencoded({ extended: false }));
     }
+    routes() {
+        this.app.use(index_1.default);
+        this.app.use("/posts", posts_1.default);
+    }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
             this.settings();
@@ -40,4 +49,4 @@ class App {
     }
 }
 /* Ejecutando La Clase */
-new App();
+new App(express_1.default());

@@ -1,30 +1,39 @@
 import express, { Application } from "express";
 import morgan from "morgan";
 
-class App {
-  app: Application;
+import indexRouter from "./routes/index";
+import postRouter from "./routes/posts";
 
-  constructor() {
-    this.app = express();
+class App {
+  // private app: Application;
+
+  constructor(private app: Application) {
+    // this.app = express();
     this.init();
   }
 
-  public init(): void {
+  private init(): void {
     this.middlewares();
+    this.routes();
     this.start();
   }
 
-  public settings(): void {
+  private settings(): void {
     this.app.set("port", process.env.PORT || 3000);
   }
 
-  public middlewares(): void {
+  private middlewares(): void {
     this.app.use(morgan("dev"));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
   }
 
-  public async start(): Promise<void> {
+  private routes(): void {
+    this.app.use(indexRouter);
+    this.app.use("/posts", postRouter);
+  }
+
+  private async start(): Promise<void> {
     this.settings();
     await this.app.listen(this.app.get("port"));
     console.log(`Server On Port ${this.app.get("port")}`);
@@ -32,4 +41,4 @@ class App {
 }
 
 /* Ejecutando La Clase */
-new App();
+new App(express());
